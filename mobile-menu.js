@@ -120,6 +120,21 @@ function setupDesktopToggle() {
         const isCollapsed = sidebar.classList.contains('collapsed');
         btn.querySelector('svg').style.transform = isCollapsed ? 'scaleX(-1)' : '';
         localStorage.setItem('sidebarCollapsed', isCollapsed ? '1' : '0');
+
+        // Resize charts during and after sidebar transition (280ms)
+        function resizeCharts() {
+            if (window.Chart && Chart.instances) {
+                Object.values(Chart.instances).forEach(function(chart) {
+                    chart.resize();
+                });
+            }
+            window.dispatchEvent(new Event('resize'));
+        }
+        // Fire at multiple points: mid-transition, end, and a bit after
+        setTimeout(resizeCharts, 100);
+        setTimeout(resizeCharts, 200);
+        setTimeout(resizeCharts, 310);
+        setTimeout(resizeCharts, 500);
     });
 
     if (headerLeft) {
