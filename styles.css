@@ -3258,11 +3258,13 @@ input[type="time"] {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: var(--bg-secondary);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.95);
     border-radius: 14px;
     padding: 16px 18px;
+    box-shadow: 0 4px 20px rgba(2,16,36,0.15);
 }
 .dv-stat-icon {
     width: 44px;
@@ -3297,13 +3299,15 @@ input[type="time"] {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: var(--bg-secondary);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.95);
     border-radius: 14px;
     padding: 14px 16px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    box-shadow: 0 4px 20px rgba(2,16,36,0.15);
 }
 .dv-search-wrap {
     display: flex;
@@ -3410,19 +3414,21 @@ input[type="time"] {
     gap: 16px;
 }
 .dv-card {
-    background: var(--bg-secondary);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.95);
     border-radius: 16px;
     padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    box-shadow: 0 4px 20px rgba(2,16,36,0.15);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 .dv-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 28px rgba(2,16,36,0.22);
 }
 .dv-card-top { display: flex; align-items: center; justify-content: space-between; }
 .dv-card-id-wrap { display: flex; align-items: center; gap: 12px; }
