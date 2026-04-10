@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Maintenance - PrintCare</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-mini">
+                    <svg width="30" height="30" viewBox="0 0 50 50" fill="none">
+                        <rect x="5" y="10" width="40" height="30" rx="2" stroke="#fff" stroke-width="2"/>
+                        <rect x="8" y="15" width="34" height="12" rx="1" stroke="#fff" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <h2>PrintCare</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="maintenance.html" class="nav-item active">
+                    <span class="icon">📱</span>
+                    <span>Input Maintenance</span>
+                </a>
+                <a href="devices.html" class="nav-item">
+                    <span class="icon">🖨️</span>
+                    <span>Daftar Perangkat</span>
+                </a>
+                <a href="troubleshoot.html" class="nav-item">
+                    <span class="icon">🔧</span>
+                    <span>Troubleshoot Log</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <span class="icon">📈</span>
+                    <span>History Grafik</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-left">
+                    <h1>Input Maintenance</h1>
+                    <p class="breadcrumb">Laporan maintenance perangkat printer</p>
+                </div>
+                <div class="header-right">
+                    <div class="topbar-user">
+                        <div class="avatar"></div>
+                        <div class="user-info">
+                            <p class="user-name"></p>
+                            <p class="user-role"></p>
+                        </div>
+                        <button class="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <form class="maintenance-form" id="maintenanceForm">
+                    <!-- QR Code Section -->
+                    <div class="form-card">
+                        <fieldset class="form-section">
+                            <legend>Identifikasi Perangkat</legend>
+                            
+                            <div class="qr-input-group">
+                                <div class="qr-scanner">
+                                    <button type="button" class="btn btn-primary btn-lg" id="openCamera">
+                                        <span>📱</span> Scan QR Code
+                                    </button>
+                                    <p class="hint">Arahkan kamera ke QR code pada printer</p>
+                                </div>
+
+                                <!-- Hidden file input for camera -->
+                                <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+
+                                <!-- QR Preview -->
+                                <div id="qrPreview" class="qr-preview" style="display: none;">
+                                    <img id="qrImage" src="" alt="QR Preview">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('cameraInput').click()">
+                                        📷 Ambil Ulang
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="divider">atau</div>
+
+                            <div class="form-group">
+                                <label for="printerId">ID / Nama Perangkat *</label>
+                                <input type="text" id="printerId" name="printerId" placeholder="Contoh: PR-001 atau HP LaserJet Pro" required>
+                                <small>Bisa diisi manual jika scan QR tidak berhasil</small>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Location & Date Section -->
+                    <div class="form-card">
+                        <fieldset class="form-section">
+                            <legend>Informasi Lokasi & Waktu</legend>
+
+                            <div class="form-group">
+                                <label for="location">Lokasi Perangkat *</label>
+                                <input type="text" id="location" name="location" placeholder="Kantor Lantai 1, Ruang Operasional" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="maintenanceDate">Tanggal Maintenance *</label>
+                                <input type="datetime-local" id="maintenanceDate" name="maintenanceDate" required>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Photo Upload Section -->
+                    <div class="form-card">
+                        <fieldset class="form-section">
+                            <legend>Dokumentasi</legend>
+
+                            <div class="form-group">
+                                <label for="photoUpload">Upload Foto Kegiatan *</label>
+                                <div class="file-upload">
+                                    <input type="file" id="photoUpload" name="photoUpload" accept="image/*" required>
+                                    <div class="upload-area">
+                                        <span class="upload-icon">📸</span>
+                                        <p>Klik atau drag foto ke area ini</p>
+                                        <small>File: JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                </div>
+
+                                <!-- Photo Preview -->
+                                <div id="photoPreview" class="photo-preview" style="display: none;">
+                                    <img id="previewImage" src="" alt="Photo Preview">
+                                    <button type="button" class="btn-close" onclick="clearPhotoPreview()">✕</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Condition Assessment Section -->
+                    <div class="form-card">
+                        <fieldset class="form-section">
+                            <legend>Penilaian Kondisi</legend>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="condition">Kondisi Perangkat *</label>
+                                    <select id="condition" name="condition" required>
+                                        <option value="">-- Pilih kondisi --</option>
+                                        <option value="baik">Baik</option>
+                                        <option value="normal">Normal / Cukup</option>
+                                        <option value="rusak">Rusak / Memerlukan Perbaikan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="maintenanceType">Jenis Maintenance *</label>
+                                    <select id="maintenanceType" name="maintenanceType" required>
+                                        <option value="">-- Pilih jenis --</option>
+                                        <option value="preventive">Preventive (Pencegahan)</option>
+                                        <option value="corrective">Corrective (Perbaikan)</option>
+                                        <option value="check">Check / Inspeksi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notes">Catatan & Deskripsi Kegiatan</label>
+                                <textarea id="notes" name="notes" rows="5" placeholder="Jelaskan kondisi printer, masalah yang ditemukan, dan tindakan yang diambil..." class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="technician">Nama Teknisi *</label>
+                                <input type="text" id="technician" name="technician" placeholder="Nama lengkap saat maintenance" required>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Parts Used Section -->
+                    <div class="form-card">
+                        <fieldset class="form-section">
+                            <legend>Suku Cadang / Bahan yang Digunakan</legend>
+
+                            <div class="parts-list">
+                                <div class="part-item">
+                                    <input type="text" placeholder="Nama suku cadang / bahan" class="part-name">
+                                    <input type="number" placeholder="Qty" class="part-qty" min="1" value="1">
+                                    <button type="button" class="btn-icon-remove">✕</button>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-secondary" id="addPartBtn">
+                                + Tambah Suku Cadang
+                            </button>
+                        </fieldset>
+                    </div>
+
+                    <!-- Submit Section -->
+                    <div class="form-actions">
+                        <button type="reset" class="btn btn-secondary">Bersihkan Form</button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            💾 Simpan Laporan Maintenance
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="message-box message-success" style="display: none;">
+                    <span>✔️</span>
+                    <div>
+                        <strong>Berhasil!</strong>
+                        <p>Laporan maintenance telah disimpan.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Auto-fill date/time to current
+        document.getElementById('maintenanceDate').valueAsDate = new Date();
+
+        // Open Camera
+        document.getElementById('openCamera').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('cameraInput').click();
+        });
+
+        // Camera Input Handler
+        document.getElementById('cameraInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('qrImage').src = event.target.result;
+                    document.getElementById('qrPreview').style.display = 'flex';
+                    document.getElementById('printerId').value = 'PR-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Photo Upload Handler
+        const fileUploadInput = document.getElementById('photoUpload');
+        fileUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('previewImage').src = event.target.result;
+                    document.getElementById('photoPreview').style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function clearPhotoPreview() {
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoUpload').value = '';
+        }
+
+        // Add Part Button
+        document.getElementById('addPartBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const newPart = document.createElement('div');
+            newPart.className = 'part-item';
+            newPart.innerHTML = `
+                <input type="text" placeholder="Nama suku cadang / bahan" class="part-name">
+                <input type="number" placeholder="Qty" class="part-qty" min="1" value="1">
+                <button type="button" class="btn-icon-remove" onclick="this.parentElement.remove()">✕</button>
+            `;
+            document.querySelector('.parts-list').appendChild(newPart);
+        });
+
+        // Form Submit
+        document.getElementById('maintenanceForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simulate form submission
+            setTimeout(() => {
+                document.getElementById('maintenanceForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'flex';
+            }, 500);
+        });
+    </script>
+    <script src="mobile-menu.js"></script>
+</body>
+</html>

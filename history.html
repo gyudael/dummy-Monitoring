@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Grafik - PrintCare</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-mini">
+                    <svg width="30" height="30" viewBox="0 0 50 50" fill="none">
+                        <rect x="5" y="10" width="40" height="30" rx="2" stroke="#fff" stroke-width="2"/>
+                        <rect x="8" y="15" width="34" height="12" rx="1" stroke="#fff" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <h2>PrintCare</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="maintenance.html" class="nav-item">
+                    <span class="icon">📱</span>
+                    <span>Input Maintenance</span>
+                </a>
+                <a href="devices.html" class="nav-item">
+                    <span class="icon">🖨️</span>
+                    <span>Daftar Perangkat</span>
+                </a>
+                <a href="troubleshoot.html" class="nav-item">
+                    <span class="icon">🔧</span>
+                    <span>Troubleshoot Log</span>
+                </a>
+                <a href="history.html" class="nav-item active">
+                    <span class="icon">📈</span>
+                    <span>History Grafik</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-left">
+                    <h1>History Grafik Maintenance</h1>
+                </div>
+                <div class="header-right">
+                    <div class="topbar-user">
+                        <div class="avatar"></div>
+                        <div class="user-info">
+                            <p class="user-name"></p>
+                            <p class="user-role"></p>
+                        </div>
+                        <button class="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Month/Year Selector -->
+                <div class="history-selector" style="display: flex; gap: 8px; align-items: center; margin-bottom: 20px; max-width: 400px;">
+                    <select id="monthSelect" class="month-dropdown" style="flex: 1;" onchange="switchMonthFromDropdown(this.value)">
+                        <option value="jan">Januari</option>
+                        <option value="feb">Februari</option>
+                        <option value="mar">Maret</option>
+                        <option value="apr" selected>April</option>
+                        <option value="may">Mei</option>
+                        <option value="jun">Juni</option>
+                        <option value="jul">Juli</option>
+                        <option value="aug">Agustus</option>
+                        <option value="sep">September</option>
+                        <option value="oct">Oktober</option>
+                        <option value="nov">November</option>
+                        <option value="dec">Desember</option>
+                    </select>
+                    <select id="yearSelect" class="month-dropdown" style="flex: 1;" onchange="switchYear(this.value)">
+                        <option value="" selected disabled>Tahun</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <!-- Charts Section - Side by Side -->
+                <section class="charts-section charts-equal">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Plan vs Actual Maintenance - <span id="chartTitle">April</span></h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsPNG('historyChart', 'maintenance-history')">📥 PNG</button>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsJPG('historyChart', 'maintenance-history')">📥 JPG</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="historyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Penggantian Catridge - <span id="cartridgeChartTitle">April</span></h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsPNG('cartridgeChart', 'cartridge-history')">📥 PNG</button>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsJPG('cartridgeChart', 'cartridge-history')">📥 JPG</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="cartridgeChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistics -->
+                <section class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e3f2fd;">
+                            <span>📋</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Total Plan</p>
+                            <h3 class="stat-value" id="totalPlan">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e8f5e9;">
+                            <span>✅</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Total Actual</p>
+                            <h3 class="stat-value" id="totalActual">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #ede7f6;">
+                            <span>📊</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Rata-rata Plan</p>
+                            <h3 class="stat-value" id="avgPlan">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fff3e0;">
+                            <span>📈</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Rata-rata Actual</p>
+                            <h3 class="stat-value" id="avgActual">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fce4ec;">
+                            <span>🖨️</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Plan / Actual Catridge</p>
+                            <h3 class="stat-value" id="totalCartridge">0</h3>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Month data storage
+        const monthsData = {
+            'jan': {
+                name: 'Januari',
+                plan: [2, 3, 4, 3, 2, 1, 2, 3, 5, 4, 3, 2, 1, 3, 4, 5, 3, 2, 4, 3, 2, 1, 3, 4, 5, 4, 3, 2, 1, 2, 3],
+                actual: [1, 2, 3, 4, 3, 2, 1, 2, 4, 5, 4, 3, 2, 2, 3, 4, 4, 3, 3, 4, 3, 2, 2, 3, 4, 5, 4, 3, 2, 1, 2],
+                planCartridge: [3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 4, 5, 7, 8, 9, 8, 7, 5, 4, 3, 2, 3, 5, 6, 8, 9, 8, 6, 5, 4],
+                actualCartridge: [2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 4, 6, 7, 8, 9, 8, 6, 5, 4, 3, 2, 4, 5, 7, 8, 9, 7, 6, 5]
+            },
+            'feb': {
+                name: 'Februari',
+                plan: [8, 7, 9, 10, 8, 7, 6, 9, 10, 11, 9, 8, 7, 6, 8, 10, 11, 9, 8, 7, 9, 10, 8, 7, 6, 8, 9, 10],
+                actual: [7, 8, 8, 9, 9, 8, 7, 8, 9, 10, 10, 9, 8, 7, 7, 9, 10, 10, 9, 8, 8, 9, 9, 8, 7, 7, 8, 9],
+                planCartridge: [5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 5, 6, 8, 9, 10, 9, 7, 6, 5, 4, 5, 7, 8, 9, 8, 6],
+                actualCartridge: [4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 5, 7, 8, 9, 10, 8, 7, 6, 5, 4, 6, 7, 8, 9, 7]
+            },
+            'mar': {
+                name: 'Maret',
+                plan: [5, 6, 4, 3, 5, 7, 8, 6, 4, 3, 5, 7, 9, 8, 6, 4, 3, 5, 7, 8, 6, 4, 3, 5, 7, 9, 8, 6, 4, 3, 5],
+                actual: [4, 5, 5, 4, 4, 6, 7, 7, 5, 4, 4, 6, 8, 9, 7, 5, 4, 4, 6, 7, 7, 5, 4, 4, 6, 8, 9, 7, 5, 4, 4],
+                planCartridge: [7, 8, 9, 8, 6, 5, 4, 3, 4, 6, 7, 9, 10, 9, 7, 5, 4, 3, 4, 6, 8, 9, 10, 8, 7, 5, 4, 3, 5, 7, 8],
+                actualCartridge: [6, 7, 8, 9, 7, 6, 5, 4, 3, 5, 6, 8, 9, 10, 8, 6, 5, 4, 3, 5, 7, 8, 9, 9, 8, 6, 5, 4, 4, 6, 7]
+            },
+            'apr': {
+                name: 'April',
+                plan: [10, 9, 8, 7, 6, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3],
+                actual: [9, 8, 7, 8, 7, 6, 5, 6, 7, 10, 11, 10, 9, 8, 7, 6, 5, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4],
+                planCartridge: [2, 3, 5, 7, 9, 10, 9, 8, 6, 4, 3, 2, 3, 5, 7, 9, 10, 8, 6, 4, 3, 2, 4, 6, 8, 10, 9, 7, 5, 3],
+                actualCartridge: [3, 4, 6, 8, 10, 9, 8, 7, 5, 3, 2, 3, 4, 6, 8, 10, 9, 7, 5, 3, 2, 3, 5, 7, 9, 9, 8, 6, 4, 2]
+            },
+            'may': {
+                name: 'Mei',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'jun': {
+                name: 'Juni',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'jul': {
+                name: 'Juli',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'aug': {
+                name: 'Agustus',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'sep': {
+                name: 'September',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'oct': {
+                name: 'Oktober',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'nov': {
+                name: 'November',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            },
+            'dec': {
+                name: 'Desember',
+                plan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                planCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                actualCartridge: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            }
+        };
+
+        let currentMonth = 'apr';
+        let currentYear = '2026';
+        let chartInstance = null;
+        let cartridgeChartInstance = null;
+        let yearlyLineChartInstance = null;
+        let viewMode = 'monthly'; // 'monthly' or 'yearly'
+
+        // Generate labels for days
+        function generateLabels() {
+            const data = monthsData[currentMonth];
+            return Array.from({length: data.plan.length}, (_, i) => String(i + 1));
+        }
+
+        // Create chart
+        function createChart() {
+            const data = monthsData[currentMonth];
+            const labels = generateLabels();
+
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Plan Maintenance',
+                        data: data.plan,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1
+                    }, {
+                        label: 'Actual Maintenance',
+                        data: data.actual,
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#FF9800',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 12
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Create cartridge chart
+            const ctxCartridge = document.getElementById('cartridgeChart').getContext('2d');
+            
+            if (cartridgeChartInstance) {
+                cartridgeChartInstance.destroy();
+            }
+
+            cartridgeChartInstance = new Chart(ctxCartridge, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Plan Catridge Replacement',
+                        data: data.planCartridge,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1
+                    }, {
+                        label: 'Actual Catridge Replacement',
+                        data: data.actualCartridge,
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        borderWidth: 3,
+                        tension: 0,
+                        fill: false,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#FF9800',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 12,
+                            ticks: {
+                                stepSize: 2
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const data = monthsData[currentMonth];
+            const totalPlan = data.plan.reduce((a, b) => a + b, 0);
+            const totalActual = data.actual.reduce((a, b) => a + b, 0);
+            const totalPlanCartridge = data.planCartridge.reduce((a, b) => a + b, 0);
+            const totalActualCartridge = data.actualCartridge.reduce((a, b) => a + b, 0);
+            const avgPlan = (totalPlan / data.plan.length).toFixed(1);
+            const avgActual = (totalActual / data.actual.length).toFixed(1);
+
+            document.getElementById('totalPlan').textContent = totalPlan;
+            document.getElementById('totalActual').textContent = totalActual;
+            document.getElementById('avgPlan').textContent = avgPlan;
+            document.getElementById('avgActual').textContent = avgActual;
+            document.getElementById('totalCartridge').textContent = `${totalPlanCartridge} / ${totalActualCartridge}`;
+        }
+
+        // Switch month
+        function switchMonth(month) {
+            if (!monthsData[month]) return;
+            
+            currentMonth = month;
+            const monthInfo = monthsData[month];
+            viewMode = 'monthly';
+            
+            document.getElementById('chartTitle').textContent = monthInfo.name;
+            document.getElementById('cartridgeChartTitle').textContent = monthInfo.name;
+            
+            createChart();
+        }
+
+        // Switch month from dropdown
+        function switchMonthFromDropdown(month) {
+            // Reset year dropdown to placeholder
+            document.getElementById('yearSelect').selectedIndex = 0;
+            switchMonth(month);
+        }
+
+        // Switch year (show yearly chart)
+        function switchYear(year) {
+            currentYear = year;
+            viewMode = 'yearly';
+            
+            document.getElementById('chartTitle').textContent = 'Tahunan ' + year;
+            document.getElementById('cartridgeChartTitle').textContent = 'Tahunan ' + year;
+            
+            // Deselect month dropdown
+            document.getElementById('monthSelect').selectedIndex = -1;
+            
+            createYearlyChart();
+        }
+
+        // Create yearly chart
+        function createYearlyChart() {
+            const months = ['jan', 'feb', 'mar', 'apr'];
+            const monthLabels = [];
+            const planData = [];
+            const actualData = [];
+            const planCartData = [];
+            const actualCartData = [];
+
+            months.forEach(month => {
+                if (monthsData[month]) {
+                    const data = monthsData[month];
+                    monthLabels.push(data.name);
+                    const totalPlan = data.plan.reduce((a, b) => a + b, 0);
+                    const totalActual = data.actual.reduce((a, b) => a + b, 0);
+                    const totalPlanCart = data.planCartridge.reduce((a, b) => a + b, 0);
+                    const totalActualCart = data.actualCartridge.reduce((a, b) => a + b, 0);
+                    planData.push(totalPlan);
+                    actualData.push(totalActual);
+                    planCartData.push(totalPlanCart);
+                    actualCartData.push(totalActualCart);
+                }
+            });
+
+            // Maintenance yearly chart
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Total Plan Maintenance',
+                        data: planData,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }, {
+                        label: 'Total Actual Maintenance',
+                        data: actualData,
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#FF9800',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Cartridge yearly chart
+            const ctxCartridge = document.getElementById('cartridgeChart').getContext('2d');
+
+            if (cartridgeChartInstance) {
+                cartridgeChartInstance.destroy();
+            }
+
+            cartridgeChartInstance = new Chart(ctxCartridge, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Total Plan Catridge',
+                        data: planCartData,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }, {
+                        label: 'Total Actual Catridge',
+                        data: actualCartData,
+                        borderColor: '#FF9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#FF9800',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('chartTitle').textContent = `Tahunan ${currentYear}`;
+            document.getElementById('cartridgeChartTitle').textContent = `Tahunan ${currentYear}`;
+            updateYearlyStats();
+        }
+
+        // Update yearly statistics
+        function updateYearlyStats() {
+            const months = ['jan', 'feb', 'mar', 'apr'];
+            let totalYearPlan = 0;
+            let totalYearActual = 0;
+            let totalYearPlanCart = 0;
+            let totalYearActualCart = 0;
+            let dataCount = 0;
+
+            months.forEach(month => {
+                if (monthsData[month]) {
+                    const data = monthsData[month];
+                    const monthPlan = data.plan.reduce((a, b) => a + b, 0);
+                    const monthActual = data.actual.reduce((a, b) => a + b, 0);
+                    const monthPlanCart = data.planCartridge.reduce((a, b) => a + b, 0);
+                    const monthActualCart = data.actualCartridge.reduce((a, b) => a + b, 0);
+                    totalYearPlan += monthPlan;
+                    totalYearActual += monthActual;
+                    totalYearPlanCart += monthPlanCart;
+                    totalYearActualCart += monthActualCart;
+                    dataCount++;
+                }
+            });
+
+            const avgYearPlan = (totalYearPlan / dataCount).toFixed(1);
+            const avgYearActual = (totalYearActual / dataCount).toFixed(1);
+
+            document.getElementById('totalPlan').textContent = totalYearPlan;
+            document.getElementById('totalActual').textContent = totalYearActual;
+            document.getElementById('avgPlan').textContent = avgYearPlan;
+            document.getElementById('avgActual').textContent = avgYearActual;
+            document.getElementById('totalCartridge').textContent = `${totalYearPlanCart} / ${totalYearActualCart}`;
+        }
+
+        // Download yearly graphics as CSV
+        function downloadYearlyGraphics() {
+            let csv = 'Bulan,Plan Maintenance (Total),Actual Maintenance (Total),Rata-rata Plan,Rata-rata Actual\n';
+            
+            const months = ['jan', 'feb', 'mar', 'apr'];
+            
+            months.forEach(month => {
+                if (monthsData[month]) {
+                    const data = monthsData[month];
+                    const totalPlan = data.plan.reduce((a, b) => a + b, 0);
+                    const totalActual = data.actual.reduce((a, b) => a + b, 0);
+                    const avgPlan = (totalPlan / data.plan.length).toFixed(1);
+                    const avgActual = (totalActual / data.actual.length).toFixed(1);
+                    
+                    csv += `${data.name},${totalPlan},${totalActual},${avgPlan},${avgActual}\n`;
+                }
+            });
+            
+            // Create blob and download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `grafik-maintenance-${currentYear}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Download chart as PNG
+        function downloadChartAsPNG(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `${filename}.png`;
+            link.click();
+        }
+
+        // Download chart as JPG
+        function downloadChartAsJPG(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
+            link.download = `${filename}.jpg`;
+            link.click();
+        }
+
+        // Switch view type between maintenance and cartridge
+        // (Removed - now showing both in single view)
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUserProfile();
+            createChart();
+        });
+    </script>
+    <script src="mobile-menu.js"></script>
+</body>
+</html>

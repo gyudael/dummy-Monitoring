@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Printer Maintenance</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-mini">
+                    <svg width="30" height="30" viewBox="0 0 50 50" fill="none">
+                        <rect x="5" y="10" width="40" height="30" rx="2" stroke="#fff" stroke-width="2"/>
+                        <rect x="8" y="15" width="34" height="12" rx="1" stroke="#fff" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <h2>PrintCare</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="maintenance.html" class="nav-item">
+                    <span class="icon">📱</span>
+                    <span>Input Maintenance</span>
+                </a>
+                <a href="devices.html" class="nav-item">
+                    <span class="icon">🖨️</span>
+                    <span>Daftar Perangkat</span>
+                </a>
+                <a href="troubleshoot.html" class="nav-item">
+                    <span class="icon">🔧</span>
+                    <span>Troubleshoot Log</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <span class="icon">📈</span>
+                    <span>History Grafik</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="topbar-user">
+                        <div class="avatar"></div>
+                        <div class="user-info">
+                            <p class="user-name"></p>
+                            <p class="user-role"></p>
+                        </div>
+                        <button class="btn-logout">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Stat Cards -->
+                <section class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e3f2fd;">
+                            <span>🖨️</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Total Printer</p>
+                            <h3 class="stat-value">45</h3>
+                            <p class="stat-change">Aktif & terdaftar</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #e8f5e9;">
+                            <span>✔️</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Sudah Dimaintenance</p>
+                            <h3 class="stat-value">28</h3>
+                            <p class="stat-change">62.2% dari total</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fff3e0;">
+                            <span>⏳</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Belum Dimaintenance</p>
+                            <h3 class="stat-value">12</h3>
+                            <p class="stat-change">26.7% dari total</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #ffebee;">
+                            <span>🔨</span>
+                        </div>
+                        <div class="stat-content">
+                            <p class="stat-label">Dalam Perbaikan</p>
+                            <h3 class="stat-value">5</h3>
+                            <p class="stat-change">11.1% dari total</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="charts-section">
+                    <div class="chart-container wide">
+                        <div class="chart-header">
+                            <h3>Plan vs Actual Maintenance - April 2026</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsPNG('activityChart', 'maintenance-daily')">📥 PNG</button>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsJPG('activityChart', 'maintenance-daily')">📥 JPG</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container wide">
+                        <div class="chart-header">
+                            <h3>Maintenance Penggantian Tinta - April 2026</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsPNG('inkChart', 'cartridge-replacement')">📥 PNG</button>
+                                <button class="btn btn-sm btn-secondary" onclick="downloadChartAsJPG('inkChart', 'cartridge-replacement')">📥 JPG</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="inkChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Printer Table Section -->
+                <section class="table-section">
+                    <div class="section-header">
+                        <h3>Daftar Printer Terkini</h3>
+                        <a href="devices.html" class="btn btn-sm btn-secondary">Lihat Semua →</a>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Printer</th>
+                                    <th>Lokasi</th>
+                                    <th>Status</th>
+                                    <th>Maintenance Terakhir</th>
+                                    <th>Teknisi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>PR-001</strong></td>
+                                    <td>Kantor - Lantai 1</td>
+                                    <td><span class="badge badge-success">Aktif</span></td>
+                                    <td>12 Apr 2026</td>
+                                    <td>Budi Santoso</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PR-002</strong></td>
+                                    <td>Kantor - Lantai 2</td>
+                                    <td><span class="badge badge-warning">Pending</span></td>
+                                    <td>5 Apr 2026</td>
+                                    <td>Andi Wijaya</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PR-003</strong></td>
+                                    <td>Ruang Operasional</td>
+                                    <td><span class="badge badge-success">Aktif</span></td>
+                                    <td>10 Apr 2026</td>
+                                    <td>Budi Santoso</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PR-004</strong></td>
+                                    <td>Gudang</td>
+                                    <td><span class="badge badge-danger">Perbaikan</span></td>
+                                    <td>2 Apr 2026</td>
+                                    <td>Andi Wijaya</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PR-005</strong></td>
+                                    <td>Kantor - Lantai 3</td>
+                                    <td><span class="badge badge-success">Aktif</span></td>
+                                    <td>8 Apr 2026</td>
+                                    <td>Roni Hermawan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Line Chart - Plan vs Actual Maintenance Daily (April 2026)
+        const activityCtx = document.getElementById('activityChart').getContext('2d');
+        new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+                datasets: [{
+                    label: 'Plan Maintenance',
+                    data: [3, 5, 7, 8, 7, 6, 5, 6, 8, 9, 8, 6, 5, 4, 3, 4, 6, 8, 9, 8, 7, 5, 4, 3, 2, 3, 5, 7, 8, 7],
+                    borderColor: '#2196F3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    borderWidth: 3,
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#2196F3',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1
+                }, {
+                    label: 'Actual Maintenance',
+                    data: [2, 4, 6, 7, 8, 7, 6, 5, 7, 9, 9, 7, 6, 5, 4, 5, 7, 8, 8, 7, 6, 4, 3, 2, 1, 2, 4, 6, 7, 6],
+                    borderColor: '#FF9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    borderWidth: 3,
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#FF9800',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Line Chart - Ink Replacement Maintenance (April 2026)
+        const inkCtx = document.getElementById('inkChart').getContext('2d');
+        new Chart(inkCtx, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+                datasets: [{
+                    label: 'Plan Cartrige Replacement',
+                    data: [5, 6, 8, 7, 9, 6, 5, 8, 7, 9, 8, 7, 6, 5, 7, 8, 9, 7, 6, 8, 7, 9, 8, 6, 9, 7, 8, 6, 7, 8],
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderWidth: 3,
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#4CAF50',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1
+                }, {
+                    label: 'Actual Cartrige Replacement',
+                    data: [5, 6, 8, 7, 8, 7, 6, 8, 8, 9, 7, 8, 7, 6, 8, 7, 9, 8, 7, 8, 8, 8, 7, 7, 8, 8, 7, 6, 8, 8],
+                    borderColor: '#E91E63',
+                    backgroundColor: 'rgba(233, 30, 99, 0.1)',
+                    borderWidth: 3,
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#E91E63',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="mobile-menu.js"></script>
+</body>
+</html>

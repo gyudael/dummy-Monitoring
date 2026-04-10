@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer Maintenance - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+    <div class="login-background">
+        <!-- Aurora blobs -->
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+
+        <!-- Floating geometric shapes - Left side -->
+        <div class="geo geo-1"></div>
+        <div class="geo geo-2"></div>
+        <div class="geo geo-3"></div>
+        <div class="geo geo-4"></div>
+        <div class="geo geo-5"></div>
+        <!-- Left extra -->
+        <div class="geo geo-6"></div>
+        <div class="geo geo-7"></div>
+        <div class="geo geo-8"></div>
+        <div class="geo geo-9"></div>
+        <div class="geo geo-10"></div>
+        <!-- Right side -->
+        <div class="geo geo-11"></div>
+        <div class="geo geo-12"></div>
+        <div class="geo geo-13"></div>
+        <div class="geo geo-14"></div>
+        <div class="geo geo-15"></div>
+        <div class="geo geo-16"></div>
+        <div class="geo geo-17"></div>
+        <div class="geo geo-18"></div>
+
+        <!-- Grid overlay -->
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo">
+                    <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="10" width="40" height="30" rx="2" stroke="#0066cc" stroke-width="2"/>
+                        <rect x="8" y="15" width="34" height="12" rx="1" stroke="#0066cc" stroke-width="1.5"/>
+                        <line x1="10" y1="30" x2="40" y2="30" stroke="#0066cc" stroke-width="2"/>
+                        <circle cx="15" cy="38" r="1.5" fill="#0066cc"/>
+                        <circle cx="25" cy="38" r="1.5" fill="#0066cc"/>
+                        <circle cx="35" cy="38" r="1.5" fill="#0066cc"/>
+                    </svg>
+                </div>
+                <h1>Printer Maintenance</h1>
+                <p class="subtitle">Sistem Manajemen Maintenance Printer</p>
+            </div>
+
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Masukkan username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                </div>
+
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Ingat saya</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
